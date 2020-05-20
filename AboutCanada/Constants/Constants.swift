@@ -19,4 +19,5 @@ class Constants {
     static let kInternetUnavailableMsg = "Please check your internet connection or try again later"
     static let kOk = "OK"
     static let kcontentType = "Content-Type"
+    static let kcontentTypeValue = "text/plain"
 }
