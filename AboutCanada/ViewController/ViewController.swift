@@ -12,7 +12,7 @@ import SystemConfiguration
 var contentTableView: UITableView!
 let cellId = Constants.kcellId
 var contents : [Content]  = [Content]()
-var activityIndicatorView = UIActivityIndicatorView ()
+var activityIndicatorView = UIActivityIndicatorView()
 var navigationItem = UINavigationItem()
 let imageCache = NSCache<AnyObject, UIImage>()
 var navigationBar = UINavigationBar()
@@ -21,19 +21,19 @@ var contentsViewModel = ContentViewModel()
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! ContentTableViewCell
+        if let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as? ContentTableViewCell {
         cell.setContentImage(image: UIImage(named:Constants.kdefaultImage1)!)
         cell.stopAnimating()
         let currentLastItem = contentsViewModel.contents[indexPath.row]//contents[indexPath.row]
         cell.content = currentLastItem
         if let cacheImage = imageCache.object(forKey: currentLastItem.title as AnyObject) {
             cell.setContentImage(image: cacheImage)
-        }else{
+        } else {
             
             if let url:URL = URL(string: currentLastItem.imageHref) {
                 cell.startAnimating()
-                URLSession.shared.downloadTask(with: url, completionHandler: { (location, response, error) -> Void in
-                    if let data = try? Data(contentsOf: url){
+URLSession.shared.downloadTask(with: url, completionHandler: { (_, _, _) -> Void in
+                    if let data = try? Data(contentsOf: url) {
                         DispatchQueue.main.async(execute: { () -> Void in
                             let img:UIImage! = UIImage(data: data)
                             cell.setContentImage(image: img)
@@ -54,6 +54,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
         return cell
     }
+        return UITableViewCell()
+    }
     
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
@@ -71,6 +73,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     override var prefersStatusBarHidden: Bool {
         return false
+    }
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        let cell = ContentTableViewCell()
+        cell.setupConstraints()
     }
     func getStatusBarHeight() -> CGFloat {
         var statusBarHeight: CGFloat = 0
@@ -98,11 +105,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     @objc func refreshButtonClicked(_ sender: UIBarButtonItem) {
-        ReachabilityCheckManager.isReachable { networkManagerInstance in
+        ReachabilityCheckManager.isReachable { _ in
             self.showActivityIndicator()
             self.fetchContents()
         }
-        ReachabilityCheckManager.isUnreachable { networkManagerInstance in
+        ReachabilityCheckManager.isUnreachable { _ in
             self.showOfflineAlert()
         }
     }
@@ -172,16 +179,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         super.viewDidAppear(animated)
         setupNavigationBar()
         setupTableView()
-        ReachabilityCheckManager.isReachable { networkManagerInstance in
+        ReachabilityCheckManager.isReachable { _ in
             self.showActivityIndicator()
             self.fetchContents()
         }
-        ReachabilityCheckManager.isUnreachable { networkManagerInstance in
+        ReachabilityCheckManager.isUnreachable { _ in
             self.showOfflineAlert()
         }
     }
     func fetchContents () {
-        contentsViewModel.fetchContents { (contents, title, error) in
+        contentsViewModel.fetchContents { (_, title, _) in
             
             DispatchQueue.main.async {
                 self.navigationItem.title = contentsViewModel.title as String
@@ -204,4 +211,3 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
 }
-

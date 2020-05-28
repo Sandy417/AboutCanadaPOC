@@ -16,7 +16,6 @@ class ReachabilityCheckManager: NSObject {
     // Create a singleton instance
     static let sharedInstance: ReachabilityCheckManager = { return ReachabilityCheckManager() }()
 
-
     override init() {
         super.init()
         do {
@@ -40,7 +39,7 @@ class ReachabilityCheckManager: NSObject {
     @objc func networkStatusChanged(_ notification: Notification) {
     }
 
-    static func stopNotifier() -> Void {
+    static func stopNotifier() {
         do {
             try (ReachabilityCheckManager.sharedInstance.reachability).startNotifier()
         } catch {

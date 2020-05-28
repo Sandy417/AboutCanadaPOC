@@ -22,8 +22,7 @@ class AboutCanadaTests: XCTestCase {
     func testExample() {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
-        
-       
+               
         let expectation = XCTestExpectation(description: "Download contents")
         
         let dropboxUrl = URL(string: "https://dl.dropboxusercontent.com/s/2iodh4vg0eortkl/facts.json")!

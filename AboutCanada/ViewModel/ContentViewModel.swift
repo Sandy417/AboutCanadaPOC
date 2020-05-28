@@ -20,29 +20,22 @@ class ContentViewModel: NSObject {
         request.httpMethod = Constants.khttpMethodGet
         request.setValue("text/plain", forHTTPHeaderField: "Content-Type")
         
-        URLSession.shared.dataTask(with: request) { (data, response
-            , error) in
+        URLSession.shared.dataTask(with: request) { (data, _ , error) in
             
             let asciiString = String(data: data!, encoding: .ascii) as String?
                 do {
                     let dataDictionary = self.asciiToDictionary(text: asciiString!)
                     if let responseDictionary = dataDictionary {
                         
-                        if let json = responseDictionary as? [String:Any], let rowContents = json["rows"] as? [[String:Any]]  {
-                            
-//                            DispatchQueue.main.async {
-//                                self.navigationItem.title = json["title"] as? String
-//
-//                            }
-                            if let titleString = json[Constants.ktitle] as? NSString {
+                        if let rowContents = responseDictionary["rows"] as? [[String:Any]] {
+                            if let titleString = responseDictionary[Constants.ktitle] as? NSString {
                             self.title = titleString
                             }
                             if self.contents.count > 1 {
                                 self.contents.removeAll()
                             }
                             for content in rowContents {
-                                if let title = content[Constants.ktitle],let description = content[Constants.kdescription],let imageHref = content[Constants.kimageHref]
-                                {
+                                if let title = content[Constants.ktitle],let description = content[Constants.kdescription],let imageHref = content[Constants.kimageHref] {
                                     if let tit = title as? String, tit.count >= 1 {
                                         self.contents.append(Content(title: title as? String ?? "", imageHref: imageHref as? String ?? "" , description: description as? String ?? ""))
                                     }
@@ -52,18 +45,10 @@ class ContentViewModel: NSObject {
                         } else {
                             completion(self.contents, self.title, nil)
                         }
-                        
-//                        DispatchQueue.main.async {
-//                            contentTableView.reloadData()
-//                        }
                     } else {
                         completion(self.contents, self.title, nil)
                     }
-                    
                 }
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-//                activityIndicatorView.stopAnimating()
-//            }
         }.resume()
         
     }
