@@ -98,15 +98,12 @@ class ContentTableViewCell: UITableViewCell {
         
         addSubviews()
         setupConstraints()
-        
-        
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }
-
 
 extension UIView {
     

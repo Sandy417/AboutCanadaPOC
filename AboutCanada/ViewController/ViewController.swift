@@ -172,8 +172,6 @@ URLSession.shared.downloadTask(with: url, completionHandler: { (_, _, _) -> Void
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
-//        setupNavigationBar()
-//        setupTableView()
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
